@@ -1,25 +1,26 @@
 public class Errors {
-    private static final String Incorrect_action = "Некоректное действие",
-        Incorrect_index = "Не действительный почтовый индекс",
-        Incorrect_street = "Название улицы введено не корректно",
-        Incorrect_city = "Название города введено не корректно",
-        Incorrect_country = "Название страны введено не корректно",
-        Incorrect_num_kv = "Номер квартиры введен не корректно",
-        Incorrect_num_house = "Название страны введено не корректно",
-        Address_list_empty = "Список аддресов пуст";
+    private static final String IncorrectAction = "Некоректное действие",
+            IncorrectIndex = "Не действительный почтовый индекс",
+            IncorrectStreet = "Название улицы введено не корректно",
+            IncorrectCity = "Название города введено не корректно",
+            IncorrectCountry = "Название страны введено не корректно",
+            IncorrectNumKV = "Номер квартиры введен не корректно",
+            IncorrectNumHouse = "Название страны введено не корректно",
+            AddressListEmpty = "Список аддресов пуст";
 
-    public Errors(){}
+    public Errors() {
+    }
 
     public static void printError(int err) {
         System.out.println(switch (err) {
-            case 101 -> Incorrect_action;
-            case 102 -> Incorrect_index;
-            case 103 -> Incorrect_street;
-            case 104 -> Incorrect_city;
-            case 105 -> Incorrect_country;
-            case 106 -> Incorrect_num_kv;
-            case 107 -> Incorrect_num_house;
-            case 108 -> Address_list_empty;
+            case 101 -> IncorrectAction;
+            case 102 -> IncorrectIndex;
+            case 103 -> IncorrectStreet;
+            case 104 -> IncorrectCity;
+            case 105 -> IncorrectCountry;
+            case 106 -> IncorrectNumKV;
+            case 107 -> IncorrectNumHouse;
+            case 108 -> AddressListEmpty;
             default -> null;
         });
     }

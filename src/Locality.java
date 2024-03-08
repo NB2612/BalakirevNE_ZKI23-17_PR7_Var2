@@ -5,57 +5,57 @@ public class Locality {
     private String country; // Название страны
     private String city; // Название города
     private String street; // Название улицы
-    private String post_index; // Почтовый индекс
-    private int num_house; // Номер дома
-    private int num_kv; // Номер квартиры
+    private String postIndex; // Почтовый индекс
+    private int houseNumber; // Номер дома
+    private int kvNum; // Номер квартиры
 
     Locality() {
         this.country = "null";
         this.city = "null";
         this.street = "null";
-        this.post_index = "000000";
-        this.num_house = 0;
-        this.num_kv = 0;
+        this.postIndex = "000000";
+        this.houseNumber = 0;
+        this.kvNum = 0;
     }
 
-    Locality(String country, String city, String post_index,
-             String street, int num_house, int num_kv) {
+    Locality(String country, String city, String postIndex,
+             String street, int houseNumber, int kvNum) {
         setCountry(country);
         setCity(city);
-        setPost_index(post_index);
+        setpostIndex(postIndex);
         setStreet(street);
-        setNum_house(num_house);
-        setNum_kv(num_kv);
+        sethouseNumber(houseNumber);
+        setkvNum(kvNum);
     }
 
     public String formatAddress() { // Формат вывода данных
-        return post_index + ", " + country + ", " + city + ", " + street + ", д. " + num_house + ", кв. " + num_kv;
+        return postIndex + ", " + country + ", " + city + ", " + street + ", д. " + houseNumber + ", кв. " + kvNum;
     }
 
-    public int getNum_kv() {
-        return num_kv;
+    public int getkvNum() {
+        return kvNum;
     }
 
-    public void setNum_kv(int num_kv) {
-        if(num_kv>0) this.num_kv = num_kv;
+    public void setkvNum(int kvNum) {
+        if (kvNum > 0) this.kvNum = kvNum;
         else Errors.printError(106);
     }
 
-    public int getNum_house() {
-        return num_house;
+    public int gethouseNumber() {
+        return houseNumber;
     }
 
-    public void setNum_house(int num_house) {
-        if(num_house>0) this.num_house = num_house;
+    public void sethouseNumber(int houseNumber) {
+        if (houseNumber > 0) this.houseNumber = houseNumber;
         else Errors.printError(107);
     }
 
-    public String getPost_index() {
-        return post_index;
+    public String getpostIndex() {
+        return postIndex;
     }
 
-    public void setPost_index(String post_index) {
-        if(post_index.matches("\\d{6}")) this.post_index = post_index;
+    public void setpostIndex(String postIndex) {
+        if (postIndex.matches("\\d{6}")) this.postIndex = postIndex;
         else Errors.printError(102);
     }
 
@@ -64,7 +64,7 @@ public class Locality {
     }
 
     public void setStreet(String street) {
-        if(street.matches("^\\D[а-яА-Я].+")) this.street = street;
+        if (street.matches("^\\D[а-яА-Я].+")) this.street = street;
         else Errors.printError(103);
     }
 
@@ -73,7 +73,7 @@ public class Locality {
     }
 
     public void setCity(String city) {
-        if(city.matches("^\\D[а-яА-Я]{2,}")) this.city = city;
+        if (city.matches("^\\D[а-яА-Я]{2,}")) this.city = city;
         else Errors.printError(104);
     }
 
@@ -82,23 +82,23 @@ public class Locality {
     }
 
     public void setCountry(String country) {
-        if(country.matches("^\\D[а-яА-Я]{3,}")) this.country = country;
+        if (country.matches("^\\D[а-яА-Я]{3,}")) this.country = country;
         else Errors.printError(105);
     }
 
     // Компаратор для сортировки
-    public static Comparator<Locality> sortBy(String field, boolean up_or_down){
+    public static Comparator<Locality> sortBy(String field, boolean upOrDown) {
         Comparator<Locality> comp = switch (field) {
-            case "index" -> Comparator.comparing(Locality::getPost_index);
+            case "index" -> Comparator.comparing(Locality::getpostIndex);
             case "country" -> Comparator.comparing(Locality::getCountry);
             case "city" -> Comparator.comparing(Locality::getCity);
             case "street" -> Comparator.comparing(Locality::getStreet);
-            case "num_house" -> Comparator.comparing(Locality::getNum_house);
-            case "num_kv" -> Comparator.comparing(Locality::getNum_kv);
+            case "houseNumber" -> Comparator.comparing(Locality::gethouseNumber);
+            case "kvNum" -> Comparator.comparing(Locality::getkvNum);
             default -> null;
         };
 
-        if (!up_or_down && comp != null) comp = comp.reversed();
+        if (!upOrDown && comp != null) comp = comp.reversed();
 
         return comp;
     }
