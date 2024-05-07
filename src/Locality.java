@@ -1,4 +1,6 @@
 import java.util.Comparator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Locality {
 
@@ -8,6 +10,8 @@ public class Locality {
     private String postIndex; // Почтовый индекс
     private int houseNumber; // Номер дома
     private int kvNum; // Номер квартиры
+
+    private static final Logger LOGGER = Logger.getLogger(Locality.class.getName());
 
     Locality() {
         this.country = "null";
@@ -20,16 +24,21 @@ public class Locality {
 
     Locality(String country, String city, String postIndex,
              String street, int houseNumber, int kvNum) {
-        setCountry(country);
-        setCity(city);
-        setpostIndex(postIndex);
-        setStreet(street);
-        sethouseNumber(houseNumber);
-        setkvNum(kvNum);
+        try {
+            setCountry(country);
+            setCity(city);
+            setpostIndex(postIndex);
+            setStreet(street);
+            sethouseNumber(houseNumber);
+            setkvNum(kvNum);
+        } catch (IllegalArgumentException e) {
+            LOGGER.log(Level.WARNING, "Данные введены некоректно", e);
+        }
     }
 
     public String formatAddress() { // Формат вывода данных
-        return postIndex + ", " + country + ", " + city + ", " + street + ", д. " + houseNumber + ", кв. " + kvNum;
+        return postIndex + ", " + country + ", " + city + ", " + street + ", д. " + houseNumber +
+            ", кв. " + kvNum;
     }
 
     public int getkvNum() {
@@ -38,7 +47,7 @@ public class Locality {
 
     public void setkvNum(int kvNum) {
         if (kvNum > 0) this.kvNum = kvNum;
-        else Errors.printError(106);
+        else throw new IllegalArgumentException("Номер квартиры должен быть положительным");
     }
 
     public int gethouseNumber() {
@@ -47,7 +56,7 @@ public class Locality {
 
     public void sethouseNumber(int houseNumber) {
         if (houseNumber > 0) this.houseNumber = houseNumber;
-        else Errors.printError(107);
+        else throw new IllegalArgumentException("Номер дома должен быть положительным");
     }
 
     public String getpostIndex() {
@@ -56,7 +65,7 @@ public class Locality {
 
     public void setpostIndex(String postIndex) {
         if (postIndex.matches("\\d{6}")) this.postIndex = postIndex;
-        else Errors.printError(102);
+        else throw new IllegalArgumentException("Не действительный почтовый индекс");
     }
 
     public String getStreet() {
@@ -65,7 +74,7 @@ public class Locality {
 
     public void setStreet(String street) {
         if (street.matches("^\\D[а-яА-Я].+")) this.street = street;
-        else Errors.printError(103);
+        else throw new IllegalArgumentException("Название улицы введено не корректно");
     }
 
     public String getCity() {
@@ -74,7 +83,7 @@ public class Locality {
 
     public void setCity(String city) {
         if (city.matches("^\\D[а-яА-Я]{2,}")) this.city = city;
-        else Errors.printError(104);
+        else throw new IllegalArgumentException("Название города введено не корректно");
     }
 
     public String getCountry() {
@@ -83,7 +92,7 @@ public class Locality {
 
     public void setCountry(String country) {
         if (country.matches("^\\D[а-яА-Я]{3,}")) this.country = country;
-        else Errors.printError(105);
+        else throw new IllegalArgumentException("Название страны введено не корректно");
     }
 
     // Компаратор для сортировки
@@ -98,7 +107,9 @@ public class Locality {
             default -> null;
         };
 
-        if (!upOrDown && comp != null) comp = comp.reversed();
+        assert !upOrDown && comp != null;
+
+        comp = comp.reversed();
 
         return comp;
     }
