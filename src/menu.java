@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class menu {
@@ -45,52 +44,40 @@ public class menu {
           создается и добавляется в коллекцию addresses.
           */
 
-          try (input) {
-            System.out.print("Введите страну: ");
-            country = input.nextLine();
-            if (!country.matches("^\\D[а-яА-Я]{3,}")) {
-              throw new IllegalArgumentException("Ошибка: некорректная страна.");
-            }
-
-            System.out.print("Введите город: ");
-            city = input.nextLine();
-            if (!city.matches("^\\D[а-яА-Я]{2,}")) {
-              throw new IllegalArgumentException("Ошибка: некорректный город.");
-            }
-
-            System.out.print("Введите улицу: ");
-            street = input.nextLine();
-            if (!street.matches("^\\D[а-яА-Я].+")) {
-              throw new IllegalArgumentException("Ошибка: некорректная улица.");
-            }
-
-            System.out.print("Введите почтовый индекс: ");
-            index = input.nextLine();
-            if (!index.matches("\\d{6}")) {
-              throw new IllegalArgumentException("Ошибка: некорректный почтовый индекс.");
-            }
-
-            System.out.print("Введите номер дома: ");
-            houseNumber = input.nextInt();
-            input.nextLine();
-
-            System.out.print("Введите номер квартиры: ");
-            kvNum = input.nextInt();
-            input.nextLine();
-
-            if (houseNumber <= 0 || kvNum <= 0) {
-              throw new IllegalArgumentException("Ошибка: номер дома или квартиры не могут быть "
-                  + "меньше или равны нулю.");
-            }
-
-            // Если мы дошли до этой точки, значит, данные введены корректно
-            addresses.add(new Locality(country, city, index, street, houseNumber, kvNum));
-
-          } catch (InputMismatchException e) {
-            System.out.println("Ошибка: ожидалось целое число для номера дома или квартиры.");
-          } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
+          System.out.print("Введите страну: ");
+          country = input.nextLine();
+          if (!country.matches("^\\D[а-яА-Я]{3,}")) {
+            throw new IllegalArgumentException("Ошибка: некорректная страна.");
           }
+
+          System.out.print("Введите город: ");
+          city = input.nextLine();
+          if (!city.matches("^\\D[а-яА-Я]{2,}")) {
+            throw new IllegalArgumentException("Ошибка: некорректный город.");
+          }
+
+          System.out.print("Введите улицу: ");
+          street = input.nextLine();
+          if (!street.matches("^\\D[а-яА-Я].+")) {
+            throw new IllegalArgumentException("Ошибка: некорректная улица.");
+          }
+
+          System.out.print("Введите почтовый индекс: ");
+          index = input.nextLine();
+          if (!index.matches("\\d{6}")) {
+            throw new IllegalArgumentException("Ошибка: некорректный почтовый индекс.");
+          }
+
+          System.out.print("Введите номер дома: ");
+          houseNumber = input.nextInt();
+          input.nextLine();
+
+          System.out.print("Введите номер квартиры: ");
+          kvNum = input.nextInt();
+          input.nextLine();
+
+          // Если мы дошли до этой точки, значит, данные введены корректно
+          addresses.add(new Locality(country, city, index, street, houseNumber, kvNum));
           break;
 
         case 3: // Редактирование адресов
