@@ -46,27 +46,15 @@ public class menu {
 
           System.out.print("Введите страну: ");
           country = input.nextLine();
-          if (!country.matches("^\\D[а-яА-Я]{3,}")) {
-            throw new IllegalArgumentException("Ошибка: некорректная страна.");
-          }
 
           System.out.print("Введите город: ");
           city = input.nextLine();
-          if (!city.matches("^\\D[а-яА-Я]{2,}")) {
-            throw new IllegalArgumentException("Ошибка: некорректный город.");
-          }
 
           System.out.print("Введите улицу: ");
           street = input.nextLine();
-          if (!street.matches("^\\D[а-яА-Я].+")) {
-            throw new IllegalArgumentException("Ошибка: некорректная улица.");
-          }
 
           System.out.print("Введите почтовый индекс: ");
           index = input.nextLine();
-          if (!index.matches("\\d{6}")) {
-            throw new IllegalArgumentException("Ошибка: некорректный почтовый индекс.");
-          }
 
           System.out.print("Введите номер дома: ");
           houseNumber = input.nextInt();
@@ -89,7 +77,7 @@ public class menu {
           do {
             System.out.println("Выберите адрес для редактирования:");
             for (int i = 0; i < addresses.size(); i++) {
-              System.out.println((i + 1) + ". " + addresses.get(i).formatAddress());
+              System.out.println((i + 1) + ". " + addresses.get(i));
             }
             System.out.println("Для выхода введите 0.");
             System.out.printf("Введите номер адреса (0-%s): ", addresses.size());
@@ -100,7 +88,7 @@ public class menu {
               Locality editableAddress = addresses.get(choiceAddress - 1);
               do {
                 System.out.println("Адрес " + choiceAddress + ": "
-                    + addresses.get(choiceAddress - 1).formatAddress());
+                    + addresses.get(choiceAddress - 1));
                 System.out.print("""
                     Выберите поле для редактирования:
                     1 - Почтовый индекс
@@ -175,7 +163,7 @@ public class menu {
               for (int i = 0; i < addresses.size(); i++) {
                 try {
                   System.out.println("Адрес " + i + ": " +
-                      addresses.get(i).formatAddress());
+                      addresses.get(i));
                 } catch (IndexOutOfBoundsException ex) {
                   System.err.println("Ошибка: возникла проблема "
                       + "при доступе к адресу " + i);
@@ -261,7 +249,7 @@ public class menu {
             addresses.sort(Locality.sortBy(field, upOrDown));
             System.out.println("Адреса отсортированы.");
             for (int i = 0; i < addresses.size(); i++) {
-              System.out.println("Адрес " + i + ": " + addresses.get(i).formatAddress());
+              System.out.println("Адрес " + i + ": " + addresses.get(i));
             }
           }
           break;

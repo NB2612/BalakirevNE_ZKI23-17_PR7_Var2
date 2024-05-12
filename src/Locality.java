@@ -12,6 +12,9 @@ public class Locality {
   private int houseNumber; // Номер дома
   private int kvNum; // Номер квартиры
 
+  /**
+   * Конструктор адреса по умолчанию
+   */
   Locality() {
     this.country = "null";
     this.city = "null";
@@ -21,6 +24,16 @@ public class Locality {
     this.kvNum = 0;
   }
 
+  /**
+   * Конструктор адреса с параметрами
+   *
+   * @param country старна
+   * @param city город
+   * @param postIndex почтовый индекс
+   * @param street улица
+   * @param houseNumber номер дома
+   * @param kvNum номер квартиры
+   */
   Locality(String country, String city, String postIndex,
       String street, int houseNumber, int kvNum) {
     try {
@@ -35,7 +48,13 @@ public class Locality {
     }
   }
 
-  // Компаратор для сортировки
+  /**
+   * Статический метод для создания компаратора для сортировки адресов.
+   *
+   * @param field сортируемый параметр
+   * @param upOrDown направление сортировки
+   * @return компаратор для сортировки адресов
+   */
   public static Comparator<Locality> sortBy(String field, boolean upOrDown) {
     Comparator<Locality> comp = switch (field) {
       case "index" -> Comparator.comparing(Locality::getpostIndex);
@@ -54,7 +73,8 @@ public class Locality {
     return comp;
   }
 
-  public String formatAddress() { // Формат вывода данных
+  @Override
+  public String toString() { // Формат вывода данных
     return postIndex + ", " + country + ", " + city + ", " + street + ", д. " + houseNumber +
         ", кв. " + kvNum;
   }
@@ -64,10 +84,16 @@ public class Locality {
   }
 
   public void setkvNum(int kvNum) {
-    if (kvNum > 0) {
-      this.kvNum = kvNum;
-    } else {
-      throw new IllegalArgumentException("Номер квартиры должен быть положительным");
+    try {
+      if (kvNum > 0) {
+        this.kvNum = kvNum;
+      } else {
+        throw new IllegalArgumentException("Номер квартиры должен быть положительным");
+      }
+    } catch (IllegalArgumentException e) {
+      LOGGER.log(Level.WARNING, "Произошла ошибка при установке номера дома", e);
+      // Повторное генерирование и связывание в цепочку
+      throw e;
     }
   }
 
@@ -88,11 +114,17 @@ public class Locality {
   }
 
   public void setpostIndex(String postIndex) {
-    if (postIndex.matches("\\d{6}")) {
-      this.postIndex = postIndex;
-    } else {
-      throw new IllegalArgumentException("Не действительный почтовый индекс");
+    //простой перехват исключения
+    try {
+      if (postIndex.matches("\\d{6}")) {
+        this.postIndex = postIndex;
+      } else {
+        throw new IllegalArgumentException("Не действительный почтовый индекс");
+      }
+    } catch (IllegalArgumentException e) {
+      LOGGER.log(Level.WARNING, "Ошибка при установке почтового индекса");
     }
+
   }
 
   public String getStreet() {
