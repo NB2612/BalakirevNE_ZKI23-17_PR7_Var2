@@ -1,11 +1,36 @@
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.IntSummaryStatistics;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class menu {
 
-  public static void display(Scanner input) {
-    ArrayList<Locality> addresses = new ArrayList<>();
-    int choice;
+  private static final Scanner input = new Scanner(System.in);
+  protected static ArrayList<Locality> addresses = new ArrayList<>();
+  protected static int choice;
+
+  public static void display() {
+    /* Начальные данные
+    addresses.add(new Locality("Россия", "Красноярск", "660111",
+        "Тельмана", 10, 5));
+    addresses.add(new Locality("Россия", "Красноярск", "660182",
+        "Краснодарская", 8, 11));
+    addresses.add(new Locality("Россия", "Красноярск", "660152",
+        "Вильского", 10, 1));
+    addresses.add(new Locality("Россия", "Красноярск", "660009",
+        "Рокосовского", 5, 152));*/
+    //addresses.add(new Locality("Россия","Красноярск","660","",0,0));
+
     do {
       System.out.print("""
           1 - Добавить пустой адрес
@@ -13,6 +38,7 @@ public class menu {
           3 - Редактировать
           4 - Вывести все адреса
           5 - Сортировать
+          6 - Прочее
           0 - Выход
           -->\s""");
 
@@ -253,6 +279,9 @@ public class menu {
             }
           }
           break;
+        case 6:
+          advancedMenu();
+          break;
         case 0:
           System.out.println("Завершение работы программы");
           input.close();
@@ -262,5 +291,197 @@ public class menu {
           break;
       }
     } while (true);
+  }
+
+  public static void close() {
+    input.close();
+    System.exit(0);
+  }
+
+  private static void advancedMenu() {
+    System.out.print("""
+        1 - Создать поток и вывести на экран
+        2 - Фильтрация объектов
+        3 - Удаление дубликатов
+        4 - Сумма номеров домов
+        5 - Использование Optional
+        6 - Группировка по городу
+        7 - SummaryStatistics для номеров домов
+        8 - Сохранить данные в файл
+        9 - Загрузить данные из файла
+        0 - Назад
+        -->\s""");
+
+    try {
+      choice = input.nextInt();
+    } catch (Exception e) {
+      throw new RuntimeException("Ошибка ввода пункта меню: " + e);
+    }
+    input.nextLine(); // Считываем остаток строки
+
+    switch (choice) {
+      case 1:
+        createStreamAndDisplay(addresses);
+        break;
+      case 2:
+        filterAddresses(addresses);
+        break;
+      case 3:
+        removeDuplicates(addresses);
+        break;
+      case 4:
+        sumHouseNumbers(addresses);
+        break;
+      case 5:
+        demonstrateOptional(addresses);
+        break;
+      case 6:
+        groupByCity(addresses);
+        break;
+      case 7:
+        summaryStatistics(addresses);
+        break;
+      case 8:
+        saveToFile(addresses);
+        break;
+      case 9:
+        loadFromFile(addresses);
+        break;
+      case 0:
+        break;
+    }
+  }
+
+  private static void createStreamAndDisplay(ArrayList<Locality> addresses) {
+    System.out.println("Все адреса:");
+    addresses.stream().forEach(System.out::println);
+  }
+
+  private static void filterAddresses(ArrayList<Locality> addresses) {
+    System.out.print("Введите минимальный номер дома для фильтрации: ");
+    int minHouseNumber = input.nextInt();
+    input.nextLine();
+
+    System.out.println("Отфильтрованные адреса:");
+    addresses.stream()
+        .filter(address -> address.gethouseNumber() > minHouseNumber)
+        .forEach(System.out::println);
+  }
+
+  private static void removeDuplicates(ArrayList<Locality> addresses) {
+    List<Locality> uniqueAddresses = addresses.stream()
+        .distinct()
+        .toList();
+    addresses.clear();
+    addresses.addAll(uniqueAddresses);
+    System.out.println("Дубликаты удалены.");
+  }
+
+  private static void sumHouseNumbers(ArrayList<Locality> addresses) {
+    int sum = addresses.stream()
+        .mapToInt(Locality::gethouseNumber)
+        .sum();
+    System.out.println("Сумма номеров домов: " + sum);
+  }
+
+  private static void demonstrateOptional(ArrayList<Locality> addresses) {
+    Optional<Locality> optionalLocality = addresses.stream().findFirst();
+    optionalLocality.ifPresentOrElse(
+        address -> System.out.println("Первый адрес: " + address),
+        () -> System.out.println("Список адресов пуст.")
+    );
+  }
+
+  private static void groupByCity(ArrayList<Locality> addresses) {
+    Map<String, Long> cityGroups = addresses.stream()
+        .collect(Collectors.groupingBy(Locality::getCity, Collectors.counting()));
+
+    cityGroups.forEach(
+        (city, count) -> System.out.println("Город: " + city + ", Количество: " + count));
+  }
+
+  private static void summaryStatistics(ArrayList<Locality> addresses) {
+    IntSummaryStatistics stats = addresses.stream()
+        .mapToInt(Locality::gethouseNumber)
+        .summaryStatistics();
+
+    System.out.println("Статистика:");
+    System.out.println("Min: " + stats.getMin());
+    System.out.println("Max: " + stats.getMax());
+    System.out.println("Sum: " + stats.getSum());
+    System.out.println("Average: " + stats.getAverage());
+  }
+
+  private static void saveToFile(ArrayList<Locality> addresses) {
+    if (!addresses.isEmpty()) { // Проверка, что список не пуст
+      Path path = Paths.get("addresses.txt");
+      try (BufferedWriter writer = Files.newBufferedWriter(path)) {
+        addresses.stream()
+            .map(
+                p ->
+                    p.getCountry()
+                        + ", "
+                        + p.getCity()
+                        + ", "
+                        + p.getpostIndex()
+                        + ", "
+                        + p.getStreet()
+                        + ", "
+                        + p.gethouseNumber()
+                        + ", "
+                        + p.getkvNum())
+            .forEach(
+                line -> {
+                  try {
+                    writer.write(line);
+                    writer.newLine();
+                  } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                  }
+                });
+        System.out.println("Данные сохранены в файл.");
+      } catch (IOException e) {
+        System.err.println("Ошибка при сохранении данных: " + e.getMessage());
+      }
+    } else {
+      System.err.println("Ошибка: Список адресов пуст");
+    }
+  }
+
+  private static void loadFromFile(ArrayList<Locality> addresses) {
+    Path path = Path.of("addresses.txt");
+    if (Files.exists(path)) {
+      try {
+        // Проверка, что файл не пуст
+        if (Files.size(path) > 0) {
+          try (Stream<String> lines = Files.lines(path)) {
+            lines
+                .map(line -> line.split(", "))
+                .filter(data -> data.length == 6)
+                .map(
+                    data ->
+                        new Locality(
+                            data[0],
+                            data[1],
+                            data[2],
+                            data[3],
+                            Integer.parseInt(data[4]),
+                            Integer.parseInt(data[5])))
+                .forEach(addresses::add);
+            System.out.println("Данные загружены из файла.");
+          } catch (IOException e) {
+            System.out.println("Ошибка при чтении файла: " + e.getMessage());
+          } catch (NumberFormatException e) {
+            System.out.println("Ошибка преобразования числа: " + e.getMessage());
+          }
+        } else {
+          System.out.println("Файл пуст.");
+        }
+      } catch (IOException e) {
+        System.out.println("Ошибка при проверке размера файла: " + e.getMessage());
+      }
+    } else {
+      System.out.println("Файл не существует.");
+    }
   }
 }
